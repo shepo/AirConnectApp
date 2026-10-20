@@ -1,0 +1,8 @@
+.DS_Store
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.swiftpm/
+Packages/AirBridgeCore/.build/
+Config/Signing.local.xcconfig
