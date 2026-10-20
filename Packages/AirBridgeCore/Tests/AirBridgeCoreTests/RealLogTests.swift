@@ -94,6 +94,23 @@ final class RealLogTests: XCTestCase {
         XCTAssertEqual(registry.activeCount, 5)
     }
 
+    func testSwitchedOnStereoPairSlaveShowsAsGrouped() {
+        // Switching on the wrong half of the Kitchen pair: airupnp bridges the
+        // other half and skips this one.
+        var registry = SpeakerRegistry(configured: [
+            ConfiguredDevice(udn: "uuid:RINCON_A01400", name: "Kitchen+", mac: "bb:bb:00:00:00:01", enabled: true),
+            ConfiguredDevice(udn: "uuid:RINCON_C01400", name: "Kitchen+", mac: "bb:bb:c5:f2:4b:ee", enabled: false),
+        ])
+        registry.apply(.speakerGrouped(handle: "0x148034510", name: "Kitchen"))
+        let a = registry.speakers.first { $0.udn == "uuid:RINCON_A01400" }
+        let c = registry.speakers.first { $0.udn == "uuid:RINCON_C01400" }
+        XCTAssertEqual(a?.status, .grouped)
+        XCTAssertEqual(c?.status, .notSeen) // switched off, so not "grouped"
+
+        registry.resetLive()
+        XCTAssertEqual(registry.speakers.first { $0.udn == "uuid:RINCON_A01400" }?.status, .notSeen)
+    }
+
     func testTidyLeavesNormalNamesAlone() {
         XCTAssertEqual(SpeakerRegistry.tidy("Kitchen+").name, "Kitchen")
         XCTAssertNil(SpeakerRegistry.tidy("Kitchen+").ip)

@@ -37,6 +37,9 @@ public struct SpeakerRegistry: Equatable, Sendable {
 
     public var configured: [ConfiguredDevice] = []
     var live: [String: Live] = [:] // by handle
+    /// Names airupnp skipped as members of a Sonos group or stereo pair. The skip
+    /// line carries no MAC, so these are matched to the config by name.
+    var skippedSlaves: Set<String> = []
 
     public init(configured: [ConfiguredDevice] = []) {
         self.configured = configured
@@ -45,6 +48,7 @@ public struct SpeakerRegistry: Equatable, Sendable {
     /// Forget everything the last run logged.
     public mutating func resetLive() {
         live = [:]
+        skippedSlaves = []
     }
 
     public mutating func apply(_ event: LogEvent) {
@@ -59,9 +63,13 @@ public struct SpeakerRegistry: Equatable, Sendable {
             live[handle] = nil
         case let .speakerGrouped(handle, name):
             if let handle {
-                // A handle we haven't added is a slave airupnp skipped; it may share
-                // its name with the master (a stereo pair), so don't look it up by name.
-                live[handle]?.grouped = true
+                if live[handle] != nil {
+                    live[handle]?.grouped = true
+                } else {
+                    // A slave airupnp skipped. It may share its name with the
+                    // bridged master (a stereo pair), so don't look it up by name.
+                    skippedSlaves.insert(name)
+                }
             } else if let key = live.first(where: { $0.value.name == name })?.key {
                 live[key]?.grouped = true
             }
@@ -85,7 +93,8 @@ public struct SpeakerRegistry: Equatable, Sendable {
                 name: tidy.name,
                 ip: entry?.ip ?? tidy.ip,
                 enabled: device.enabled,
-                status: entry.map { $0.grouped ? .grouped : .active } ?? .notSeen,
+                status: entry.map { $0.grouped ? .grouped : .active }
+                    ?? (device.enabled && skippedSlaves.contains(tidy.name) ? .grouped : .notSeen),
                 udn: device.udn,
                 isSurround: tidy.isSurround
             )
