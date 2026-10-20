@@ -111,7 +111,9 @@ airupnp -Z -k -x config.xml -I -p airupnp.pid -l 1000:2000 -d all=info
 
 Speaker switches edit `<enabled>` in `config.xml` while airupnp is stopped, then
 start it again. **Rescan** runs `airupnp -Z -i scan.xml` (find speakers, save, exit)
-and adds any new ones to the config.
+from an empty temporary folder, then adds any new ones to the config. The empty folder
+matters: airupnp reads `./config.xml` even with `-i`, and AirBridge's config switches new
+speakers off, which would make the scan skip them all.
 
 The code is small: `AirBridge/` holds the app (`ProcessManager`, `NetworkMonitor`,
 `Notifier`, `LoginItem`, views), and `Packages/AirBridgeCore` holds the tested logic

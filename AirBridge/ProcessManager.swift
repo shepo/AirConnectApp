@@ -122,6 +122,7 @@ final class ProcessManager {
     /// the config (on or off per settings), then carries on.
     func rescan() async {
         guard let helperURL else { return fail("The bundled airupnp is missing. Reinstall AirBridge.") }
+        guard state != .scanning else { return } // one scan at a time
         let wasRunning = !userStopped
         restartTask?.cancel()
         noSpeakerCheck?.cancel()
@@ -129,19 +130,27 @@ final class ProcessManager {
         state = .scanning
         append("— AirBridge: scanning for speakers —")
 
-        let scanURL = supportDirectory.appendingPathComponent("scan.xml")
-        try? FileManager.default.removeItem(at: scanURL)
-        let status = await runOnce(helperURL, LaunchArguments.discover(outputPath: scanURL.path), timeout: 30)
+        // airupnp reads ./config.xml even with -i, and ours switches new speakers
+        // off, which would make the scan skip every speaker. Scan from an empty
+        // folder so it sees them all with airupnp's defaults.
+        let scanDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("AirBridge-scan-\(UUID().uuidString)", isDirectory: true)
+        try? FileManager.default.createDirectory(at: scanDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: scanDirectory) }
+        let scanURL = scanDirectory.appendingPathComponent("scan.xml")
+        let status = await runOnce(helperURL, LaunchArguments.discover(outputPath: scanURL.path),
+                                   in: scanDirectory, timeout: 30)
 
         if let data = try? Data(contentsOf: scanURL), let scan = try? DeviceConfig(data: data) {
             var config = currentConfig()
             let added = config.merge(discovered: scan)
             save(config)
             append("— AirBridge: scan found \(scan.devices.count) speaker(s), \(added.count) new —")
+            if scan.devices.isEmpty { notifyNoSpeakers() }
         } else {
             append("— AirBridge: scan didn't produce a speaker list (exit \(status)) —")
+            notifyNoSpeakers()
         }
-        try? FileManager.default.removeItem(at: scanURL)
 
         state = .stopped
         if wasRunning { start() }
@@ -316,11 +325,11 @@ final class ProcessManager {
         if kill(pid, 0) == 0 { kill(pid, SIGKILL) }
     }
 
-    private func runOnce(_ url: URL, _ arguments: [String], timeout: TimeInterval) async -> Int32 {
+    private func runOnce(_ url: URL, _ arguments: [String], in directory: URL, timeout: TimeInterval) async -> Int32 {
         let process = Process()
         process.executableURL = url
         process.arguments = arguments
-        process.currentDirectoryURL = supportDirectory
+        process.currentDirectoryURL = directory
         process.standardInput = FileHandle.nullDevice
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -360,11 +369,15 @@ final class ProcessManager {
             if !configured.isEmpty && configured.allSatisfy({ !$0.enabled }) {
                 return // every speaker is switched off on purpose
             }
-            self.notifier.post(
-                title: "No speakers found",
-                body: "AirBridge hasn't found any speakers in 30 seconds. Check this Mac is on the same network, and that AirBridge is allowed under System Settings › Privacy & Security › Local Network."
-            )
+            self.notifyNoSpeakers()
         }
+    }
+
+    private func notifyNoSpeakers() {
+        notifier.post(
+            title: "No speakers found",
+            body: "AirBridge hasn't found any speakers. Check this Mac is on the same network as them, and that AirBridge is allowed under System Settings › Privacy & Security › Local Network."
+        )
     }
 
     private func fail(_ message: String) {
