@@ -18,6 +18,11 @@ public struct Speaker: Identifiable, Equatable, Sendable {
     public var status: Status
     /// Present when the speaker is in config.xml, so it can be switched.
     public var udn: String?
+    /// A short ID, set when another speaker has the same name (e.g. a stereo pair).
+    public var note: String? = nil
+    /// A Sonos with no room name: a surround or sub bonded to a home cinema
+    /// speaker. It can't play on its own, so the app doesn't offer it.
+    public var isSurround = false
 }
 
 /// Combines what config.xml says (which speakers exist, which are on) with what
@@ -53,7 +58,9 @@ public struct SpeakerRegistry: Equatable, Sendable {
         case let .speakerRemoved(handle):
             live[handle] = nil
         case let .speakerGrouped(handle, name):
-            if let handle, live[handle] != nil {
+            if let handle {
+                // A handle we haven't added is a slave airupnp skipped; it may share
+                // its name with the master (a stereo pair), so don't look it up by name.
                 live[handle]?.grouped = true
             } else if let key = live.first(where: { $0.value.name == name })?.key {
                 live[key]?.grouped = true
@@ -72,26 +79,37 @@ public struct SpeakerRegistry: Equatable, Sendable {
         var result: [Speaker] = configured.map { device in
             let key = unmatched.first(where: { Self.matches(device, $0.value) })?.key
             let entry = key.flatMap { unmatched.removeValue(forKey: $0) }
+            let tidy = Self.tidy(device.name)
             return Speaker(
                 id: device.udn,
-                name: Self.displayName(device.name),
-                ip: entry?.ip,
+                name: tidy.name,
+                ip: entry?.ip ?? tidy.ip,
                 enabled: device.enabled,
                 status: entry.map { $0.grouped ? .grouped : .active } ?? .notSeen,
-                udn: device.udn
+                udn: device.udn,
+                isSurround: tidy.isSurround
             )
         }
         for (_, entry) in unmatched {
+            let tidy = Self.tidy(entry.name)
             result.append(Speaker(
                 id: entry.mac.map { "mac:\($0)" } ?? "name:\(entry.name)",
-                name: entry.name,
-                ip: entry.ip,
+                name: tidy.name,
+                ip: entry.ip ?? tidy.ip,
                 enabled: true, // airupnp only adds speakers that are switched on
                 status: entry.grouped ? .grouped : .active,
-                udn: nil
+                udn: nil,
+                isSurround: tidy.isSurround
             ))
         }
-        return result.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        let counts = Dictionary(grouping: result.filter { !$0.isSurround }, by: \.name).mapValues(\.count)
+        for index in result.indices where !result[index].isSurround && counts[result[index].name, default: 0] > 1 {
+            result[index].note = Self.shortID(result[index].udn ?? result[index].id)
+        }
+        return result.sorted {
+            let order = $0.name.localizedStandardCompare($1.name)
+            return order == .orderedSame ? $0.id < $1.id : order == .orderedAscending
+        }
     }
 
     public var activeCount: Int {
@@ -103,11 +121,29 @@ public struct SpeakerRegistry: Equatable, Sendable {
         name.hasSuffix("+") ? String(name.dropLast()) : name
     }
 
+    /// A Sonos without a room name (a home cinema surround or sub) reports itself
+    /// as "192.168.50.138 - SYMFONISK Bookshelf - RINCON_347E5CF1497601400";
+    /// that becomes "SYMFONISK Bookshelf", its IP, and `isSurround`.
+    static func tidy(_ raw: String) -> (name: String, ip: String?, isSurround: Bool) {
+        let name = displayName(raw)
+        if let m = LogParser.match(#"^(\d{1,3}(?:\.\d{1,3}){3}) - (.+) - RINCON_[0-9A-Fa-f]+$"#, name) {
+            return (m[1], m[0], true)
+        }
+        return (name, nil, false)
+    }
+
+    /// "uuid:RINCON_347E5CF1497601400" -> "…601400".
+    static func shortID(_ id: String) -> String {
+        let tail = id.split(separator: "_").last.map(String.init) ?? id
+        return "…" + String(tail.suffix(6))
+    }
+
     static func matches(_ device: ConfiguredDevice, _ entry: Live) -> Bool {
         if let mac = device.mac, let logged = entry.mac {
             return MACAddress.logForms(of: mac).contains(logged.uppercased())
         }
         return displayName(device.name) == entry.name || device.name == entry.name
+            || tidy(device.name).name == tidy(entry.name).name
     }
 }
 

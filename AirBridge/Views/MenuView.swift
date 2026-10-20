@@ -96,15 +96,24 @@ struct SpeakerList: View {
                 .controlSize(.small)
             }
 
-            if manager.speakers.isEmpty {
+            let speakers = manager.speakers.filter { !$0.isSurround }
+            let surrounds = manager.speakers.count - speakers.count
+            if speakers.isEmpty {
                 Text(manager.state == .scanning
                      ? "Looking for speakers on your network…"
                      : "No speakers yet. Press Rescan to look for them.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(manager.speakers) { speaker in
+                ForEach(speakers) { speaker in
                     SpeakerRow(speaker: speaker)
+                }
+                if surrounds > 0 {
+                    Text(surrounds == 1
+                         ? "1 surround speaker hidden: it's part of a home cinema set and plays through its main speaker."
+                         : "\(surrounds) surround speakers hidden: they're part of a home cinema set and play through its main speaker.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
                 Text("Switch on only speakers that can't do AirPlay themselves, or they'll appear twice.")
                     .font(.caption2)
@@ -119,29 +128,35 @@ private struct SpeakerRow: View {
     let speaker: Speaker
 
     var body: some View {
-        Toggle(isOn: Binding(
-            get: { speaker.enabled },
-            set: { manager.setEnabled($0, for: speaker) }
-        )) {
+        HStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
                 Text(speaker.name)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
                 Text(detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Spacer(minLength: 8)
+            Toggle(speaker.name, isOn: Binding(
+                get: { speaker.enabled },
+                set: { manager.setEnabled($0, for: speaker) }
+            ))
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .controlSize(.mini)
         }
-        .toggleStyle(.switch)
-        .controlSize(.mini)
         .disabled(speaker.udn == nil)
         .help(speaker.udn == nil ? "Press Rescan to add this speaker to the list it can be switched from." : "")
     }
 
     private var detail: String {
-        let ip = speaker.ip ?? "—"
+        let state: String
         switch speaker.status {
-        case .active: return "On AirPlay · \(ip)"
-        case .grouped: return "In a Sonos group · \(ip)"
-        case .notSeen: return speaker.enabled ? "Not seen yet" : "Off"
+        case .active: state = "On AirPlay"
+        case .grouped: state = "In a Sonos group"
+        case .notSeen: state = speaker.enabled ? "Not seen yet" : "Off"
         }
+        return [state, speaker.ip, speaker.note].compactMap { $0 }.joined(separator: " · ")
     }
 }
