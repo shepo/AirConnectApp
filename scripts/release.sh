@@ -51,8 +51,17 @@ done
 
 echo "==> Notarising (this can take a few minutes)"
 ditto -c -k --keepParent "${APP}" "${OUT}/notarize.zip"
-xcrun notarytool submit "${OUT}/notarize.zip" --keychain-profile "${PROFILE}" --wait
+RESULT="$(xcrun notarytool submit "${OUT}/notarize.zip" --keychain-profile "${PROFILE}" \
+  --wait --output-format plist)"
 rm "${OUT}/notarize.zip"
+SUBMISSION="$(plutil -extract id raw -o - - <<<"${RESULT}")"
+STATUS="$(plutil -extract status raw -o - - <<<"${RESULT}")"
+echo "Submission ${SUBMISSION}: ${STATUS}"
+if [[ "${STATUS}" != "Accepted" ]]; then
+  echo "Notarisation failed. Apple's log:" >&2
+  xcrun notarytool log "${SUBMISSION}" --keychain-profile "${PROFILE}" >&2
+  exit 1
+fi
 
 echo "==> Stapling"
 xcrun stapler staple "${APP}"
