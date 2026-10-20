@@ -1,0 +1,103 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write # lets the project job commit a regenerated AirBridge.xcodeproj
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  project:
+    name: Xcode project matches project.yml
+    runs-on: macos-15
+    outputs:
+      regenerated: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - id: diff
+        run: |
+          if [[ -n "$(git status --porcelain AirBridge.xcodeproj AirBridge/Info.plist)" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Commit the regenerated project (branches only)
+        if: steps.diff.outputs.changed == 'true' && github.event_name == 'push' && github.ref != 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AirBridge.xcodeproj AirBridge/Info.plist
+          git commit -m "Regenerate AirBridge.xcodeproj from project.yml"
+          git push
+      - name: Fail on main if the project is stale
+        if: steps.diff.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        run: |
+          echo "::error::AirBridge.xcodeproj is out of date. Run 'xcodegen generate' and commit."
+          exit 1
+
+  test:
+    name: xcodebuild build + test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Test (xcodebuild)
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild test \
+            -project AirBridge.xcodeproj \
+            -scheme AirBridge \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
+            | tee build/test.log | xcbeautify --renderer github-actions
+
+      - name: Build app (Release, ad hoc signed)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project AirBridge.xcodeproj \
+            -scheme AirBridge \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
+            | xcbeautify --renderer github-actions
+
+      - name: Check the bundled helper
+        run: |
+          APP=build/DerivedData/Build/Products/Release/AirBridge.app
+          HELPER="$APP/Contents/Helpers/airupnp"
+          test -x "$HELPER"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          codesign -dvv "$HELPER" 2>&1 | tee /dev/stderr | grep -q 'flags=.*runtime'
+          codesign -dvv "$APP" 2>&1 | grep -q 'flags=.*runtime'
+          # Notarisation rejects get-task-allow; the Release build must not carry it.
+          if codesign -d --entitlements - --xml "$APP" 2>/dev/null | grep -q get-task-allow; then
+            echo "::error::Release build has the get-task-allow entitlement"; exit 1
+          fi
+          test -f "$APP/Contents/Resources/AirConnect/COPYING.txt"
+          test -f "$APP/Contents/Resources/AirConnect/LICENSE.txt"
+          /usr/libexec/PlistBuddy -c 'Print :LSUIElement' "$APP/Contents/Info.plist" | grep -q true
+          # It must run from inside the bundle with the hardened runtime on.
+          perl -e 'alarm 10; exec @ARGV' "$HELPER" -h > helper.txt 2>&1 || true
+          cat helper.txt
+          grep -q 'v1.12.4' helper.txt
+          grep -q -- '-Z' helper.txt
+
+      - name: Package swift test (core logic)
+        run: swift test --package-path Packages/AirBridgeCore

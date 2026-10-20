@@ -1,0 +1,412 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1411F4B11D0194AC4B273A72 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C061532116E7CBC4140CA2 /* MenuView.swift */; };
+		180727DE09490D8459A4EC0A /* AirBridgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1222C10ACCF6254ECE989E /* AirBridgeApp.swift */; };
+		188E4F150FC53417BE273AEF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47894C72CC6A6558D3FEA018 /* SettingsView.swift */; };
+		1A789959E7A3622C1F4F443C /* ProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C427E08C7E876A26F5D2A1 /* ProcessManager.swift */; };
+		1FB0D00D8DACA1EB76D2386F /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9717693CE85282A14D69C0A9 /* Notifier.swift */; };
+		29263464409DFE422E7C717B /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404B5556CAED27F23B2BDA3 /* LoginItem.swift */; };
+		5A499B77B04223F2712826A5 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DE973E4E9117C4794C02C /* NetworkMonitor.swift */; };
+		A3E13DF7CE03AC990FD1F21E /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF92B8848FA91D5CA45629E7 /* LogView.swift */; };
+		E851402A40AEC73F48D23712 /* AirBridgeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA3009CA02D6300D6BC4445 /* AirBridgeCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1DA0B1856167B1D8C4F3EB6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		24C427E08C7E876A26F5D2A1 /* ProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessManager.swift; sourceTree = "<group>"; };
+		25C061532116E7CBC4140CA2 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		37B3AA541316366A504CD084 /* AirBridgeCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirBridgeCore; path = Packages/AirBridgeCore; sourceTree = SOURCE_ROOT; };
+		47894C72CC6A6558D3FEA018 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		6F1222C10ACCF6254ECE989E /* AirBridgeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirBridgeApp.swift; sourceTree = "<group>"; };
+		70636918676BE391F973C172 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		9404B5556CAED27F23B2BDA3 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		9717693CE85282A14D69C0A9 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
+		B9C0C50A97C9724E6DE5E196 /* AirBridge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirBridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE1DE973E4E9117C4794C02C /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		FF92B8848FA91D5CA45629E7 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37440F4380FC704DDEDA34F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E851402A40AEC73F48D23712 /* AirBridgeCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1CCFAD80DCEB1246453B3402 /* AirBridge */ = {
+			isa = PBXGroup;
+			children = (
+				6F1222C10ACCF6254ECE989E /* AirBridgeApp.swift */,
+				1DA0B1856167B1D8C4F3EB6E /* Info.plist */,
+				9404B5556CAED27F23B2BDA3 /* LoginItem.swift */,
+				EE1DE973E4E9117C4794C02C /* NetworkMonitor.swift */,
+				9717693CE85282A14D69C0A9 /* Notifier.swift */,
+				24C427E08C7E876A26F5D2A1 /* ProcessManager.swift */,
+				3570C2D73BA55CB2A43315CE /* Views */,
+			);
+			path = AirBridge;
+			sourceTree = "<group>";
+		};
+		3149E8CBBCC896C16CFF6237 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B9C0C50A97C9724E6DE5E196 /* AirBridge.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3570C2D73BA55CB2A43315CE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FF92B8848FA91D5CA45629E7 /* LogView.swift */,
+				25C061532116E7CBC4140CA2 /* MenuView.swift */,
+				47894C72CC6A6558D3FEA018 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		42FED27D463002F1DD2092AF = {
+			isa = PBXGroup;
+			children = (
+				1CCFAD80DCEB1246453B3402 /* AirBridge */,
+				F664B5695812F852515F3E8D /* Config */,
+				CBBAD12AA55EA49E4C6218D4 /* Packages */,
+				3149E8CBBCC896C16CFF6237 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CBBAD12AA55EA49E4C6218D4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				37B3AA541316366A504CD084 /* AirBridgeCore */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		F664B5695812F852515F3E8D /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				70636918676BE391F973C172 /* Signing.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DA130DECA4E5AFC026A5D765 /* AirBridge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5638432060AD5A033D552530 /* Build configuration list for PBXNativeTarget "AirBridge" */;
+			buildPhases = (
+				A9B733863113F52ABFD5B4DD /* Sources */,
+				37440F4380FC704DDEDA34F9 /* Frameworks */,
+				8CA538AB9DF88ADF12EA914C /* Embed and sign airupnp */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AirBridge;
+			packageProductDependencies = (
+				8CA3009CA02D6300D6BC4445 /* AirBridgeCore */,
+			);
+			productName = AirBridge;
+			productReference = B9C0C50A97C9724E6DE5E196 /* AirBridge.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A526371CFEA49E18FE373EEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					DA130DECA4E5AFC026A5D765 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 51786BBCC6AB030F93C36752 /* Build configuration list for PBXProject "AirBridge" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 42FED27D463002F1DD2092AF;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7B000D0477A99B4704BE6A50 /* XCLocalSwiftPackageReference "Packages/AirBridgeCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3149E8CBBCC896C16CFF6237 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DA130DECA4E5AFC026A5D765 /* AirBridge */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8CA538AB9DF88ADF12EA914C /* Embed and sign airupnp */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Vendor/AirConnect/airupnp-macos-arm64-static",
+			);
+			name = "Embed and sign airupnp";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/airupnp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/scripts/embed-airupnp.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A9B733863113F52ABFD5B4DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				180727DE09490D8459A4EC0A /* AirBridgeApp.swift in Sources */,
+				A3E13DF7CE03AC990FD1F21E /* LogView.swift in Sources */,
+				29263464409DFE422E7C717B /* LoginItem.swift in Sources */,
+				1411F4B11D0194AC4B273A72 /* MenuView.swift in Sources */,
+				5A499B77B04223F2712826A5 /* NetworkMonitor.swift in Sources */,
+				1FB0D00D8DACA1EB76D2386F /* Notifier.swift in Sources */,
+				1A789959E7A3622C1F4F443C /* ProcessManager.swift in Sources */,
+				188E4F150FC53417BE273AEF /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		53B3A0DE1D970B1458F53A67 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AirBridge/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_CODE_SIGN_FLAGS = "--timestamp";
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.shepo.AirBridge;
+				PRODUCT_NAME = AirBridge;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		62D73A1C4F31C527515995C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70636918676BE391F973C172 /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		66BA56DE20B9870ECE3386A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AirBridge/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.shepo.AirBridge;
+				PRODUCT_NAME = AirBridge;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		945DE7D2EEEE7F383992FD29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70636918676BE391F973C172 /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		51786BBCC6AB030F93C36752 /* Build configuration list for PBXProject "AirBridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				945DE7D2EEEE7F383992FD29 /* Debug */,
+				62D73A1C4F31C527515995C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5638432060AD5A033D552530 /* Build configuration list for PBXNativeTarget "AirBridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66BA56DE20B9870ECE3386A4 /* Debug */,
+				53B3A0DE1D970B1458F53A67 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		7B000D0477A99B4704BE6A50 /* XCLocalSwiftPackageReference "Packages/AirBridgeCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AirBridgeCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8CA3009CA02D6300D6BC4445 /* AirBridgeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AirBridgeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A526371CFEA49E18FE373EEA /* Project object */;
+}

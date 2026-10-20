@@ -1,0 +1,9 @@
+// Signing for local builds. Put your team in Signing.local.xcconfig (not committed):
+//
+//     DEVELOPMENT_TEAM = ABCDE12345
+//
+// Without it, Xcode signs to run locally only.
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Apple Development
+
+#include? "Signing.local.xcconfig"

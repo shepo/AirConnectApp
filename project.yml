@@ -1,0 +1,83 @@
+# XcodeGen spec. AirBridge.xcodeproj is generated from this file and committed;
+# after editing it, run `xcodegen generate` (CI checks the two match).
+name: AirBridge
+options:
+  bundleIdPrefix: uk.co.shepo
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+packages:
+  AirBridgeCore:
+    path: Packages/AirBridgeCore
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ARCHS: arm64
+    ONLY_ACTIVE_ARCH: NO
+
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
+
+targets:
+  AirBridge:
+    type: application
+    platform: macOS
+    sources:
+      - path: AirBridge
+    dependencies:
+      - package: AirBridgeCore
+    info:
+      path: AirBridge/Info.plist
+      properties:
+        CFBundleDisplayName: AirBridge
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.music
+        LSMinimumSystemVersion: "14.0"
+        NSHumanReadableCopyright: "AirBridge © 2026 Jake Shepherd, MIT licence. Bundles AirConnect © Philippe (philippe44)."
+        NSLocalNetworkUsageDescription: "AirBridge finds the Sonos and UPnP speakers on your network and makes them available as AirPlay speakers on this Mac."
+        NSBonjourServices:
+          - _raop._tcp
+          - _airplay._tcp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: uk.co.shepo.AirBridge
+        PRODUCT_NAME: AirBridge
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_ENTITLEMENTS: ""
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        COMBINE_HIDPI_IMAGES: YES
+      configs:
+        Release:
+          OTHER_CODE_SIGN_FLAGS: --timestamp
+          # No get-task-allow (debugger) entitlement: notarisation rejects it.
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+    postBuildScripts:
+      - name: Embed and sign airupnp
+        basedOnDependencyAnalysis: false
+        script: '"${SRCROOT}/scripts/embed-airupnp.sh"'
+        inputFiles:
+          - $(SRCROOT)/Vendor/AirConnect/airupnp-macos-arm64-static
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/airupnp
+
+schemes:
+  AirBridge:
+    build:
+      targets:
+        AirBridge: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - package: AirBridgeCore/AirBridgeCoreTests
+    archive:
+      config: Release
