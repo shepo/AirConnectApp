@@ -13,7 +13,10 @@ PROFILE="${NOTARY_PROFILE:-AirBridge}"
 IDENTITY="Developer ID Application"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-OUT="${ROOT}/build/release"
+# Build on the internal disk: an external drive formatted ExFAT gets "._" files
+# that codesign rejects ("resource fork, Finder information … not allowed").
+BUILD_ROOT="${BUILD_ROOT:-${HOME}/Library/Caches/AirBridge-release}"
+OUT="${BUILD_ROOT}/release"
 APP="${OUT}/AirBridge.app"
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${ROOT}/AirBridge/Info.plist")"
 ZIP="${OUT}/AirBridge-${VERSION}.zip"
@@ -27,14 +30,14 @@ xcodebuild \
   -scheme AirBridge \
   -configuration Release \
   -destination 'generic/platform=macOS' \
-  -derivedDataPath "${ROOT}/build/DerivedData" \
+  -derivedDataPath "${BUILD_ROOT}/DerivedData" \
   CODE_SIGN_STYLE=Manual \
   CODE_SIGN_IDENTITY="${IDENTITY}" \
   DEVELOPMENT_TEAM="${TEAM_ID}" \
   -quiet \
   clean build
 
-BUILT="${ROOT}/build/DerivedData/Build/Products/Release/AirBridge.app"
+BUILT="${BUILD_ROOT}/DerivedData/Build/Products/Release/AirBridge.app"
 ditto "${BUILT}" "${APP}"
 
 echo "==> Checking signatures"
@@ -58,4 +61,7 @@ spctl --assess --type execute --verbose=2 "${APP}"
 
 ditto -c -k --keepParent "${APP}" "${ZIP}"
 shasum -a 256 "${ZIP}"
+mkdir -p "${ROOT}/build"
+cp "${ZIP}" "${ROOT}/build/"
 echo "==> Done: ${ZIP}"
+echo "    (copied to ${ROOT}/build/; the stapled app is ${APP})"

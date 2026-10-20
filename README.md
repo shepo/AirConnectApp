@@ -183,7 +183,9 @@ TEAM_ID=ABCDE12345 scripts/release.sh
 3. `xcrun notarytool submit … --keychain-profile AirBridge --wait`
 4. `xcrun stapler staple AirBridge.app`, then
    `spctl --assess --type execute -vv AirBridge.app` (should say *Notarized Developer ID*).
-5. Zips it to `build/release/AirBridge-<version>.zip` and prints its SHA-256.
+5. Zips it, prints its SHA-256 and copies the zip to `build/`. It builds in
+   `~/Library/Caches/AirBridge-release` (override with `BUILD_ROOT=`), so a checkout on an
+   ExFAT external drive doesn't trip codesign over `._` files.
 
 To publish, bump `CFBundleShortVersionString` / `CFBundleVersion` in `project.yml`,
 run `xcodegen generate`, commit, tag `v<version>`, then create a GitHub release with
