@@ -111,6 +111,23 @@ final class RealLogTests: XCTestCase {
         XCTAssertEqual(registry.speakers.first { $0.udn == "uuid:RINCON_A01400" }?.status, .notSeen)
     }
 
+    func testTheMacsOwnAddressIsNotASpeakersIP() {
+        var registry = SpeakerRegistry()
+        for line in [
+            "[15:37:09.561] Start:1112 Binding to iface 192.168.50.77:0 [en0]",
+            "[15:37:09.889] AddMRDevice:1038 [0x14802a0d8]: adding renderer (Kitchen) with mac BBBBC5F24BEE",
+            "[15:40:01.000] uPNPSetURI:300 [0x14802a0d8]: uPNP setURI http://192.168.50.77:54600/stream.flac (cookie 0x1)",
+        ] {
+            if let event = LogParser.parse(line) { registry.apply(event) }
+        }
+        XCTAssertNil(registry.speakers.first?.ip)
+
+        // A real speaker address is kept, and later lines don't replace it.
+        registry.apply(.speakerAddress(handle: "0x14802a0d8", ip: "192.168.50.120"))
+        registry.apply(.speakerAddress(handle: "0x14802a0d8", ip: "192.168.50.99"))
+        XCTAssertEqual(registry.speakers.first?.ip, "192.168.50.120")
+    }
+
     func testTidyLeavesNormalNamesAlone() {
         XCTAssertEqual(SpeakerRegistry.tidy("Kitchen+").name, "Kitchen")
         XCTAssertNil(SpeakerRegistry.tidy("Kitchen+").ip)

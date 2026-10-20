@@ -114,10 +114,12 @@ struct SpeakerList: View {
                          : "\(surrounds) surround speakers hidden: they're part of a home cinema set and play through its main speaker.")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Text("Switch on only speakers that can't do AirPlay themselves, or they'll appear twice.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }

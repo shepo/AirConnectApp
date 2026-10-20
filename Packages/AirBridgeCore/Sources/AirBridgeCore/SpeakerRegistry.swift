@@ -40,6 +40,9 @@ public struct SpeakerRegistry: Equatable, Sendable {
     /// Names airupnp skipped as members of a Sonos group or stereo pair. The skip
     /// line carries no MAC, so these are matched to the config by name.
     var skippedSlaves: Set<String> = []
+    /// This Mac's address ("Binding to iface …"). Player lines mention it too,
+    /// e.g. the stream URL the speaker plays from, so it's never a speaker's IP.
+    var localIP: String?
 
     public init(configured: [ConfiguredDevice] = []) {
         self.configured = configured
@@ -76,8 +79,14 @@ public struct SpeakerRegistry: Equatable, Sendable {
         case let .speakerUngrouped(handle, _):
             live[handle]?.grouped = false
         case let .speakerAddress(handle, ip):
-            live[handle]?.ip = ip
-        case .started, .bound, .ipChanged:
+            if ip != localIP, live[handle]?.ip == nil {
+                live[handle]?.ip = ip
+            }
+        case let .bound(ip, _):
+            localIP = ip
+        case let .ipChanged(ip):
+            localIP = ip
+        case .started:
             break
         }
     }
