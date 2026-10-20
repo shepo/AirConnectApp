@@ -34,6 +34,7 @@ xcodebuild \
   CODE_SIGN_STYLE=Manual \
   CODE_SIGN_IDENTITY="${IDENTITY}" \
   DEVELOPMENT_TEAM="${TEAM_ID}" \
+  CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
   -quiet \
   clean build
 
@@ -47,6 +48,15 @@ for item in "${APP}/Contents/Helpers/airupnp" "${APP}"; do
   grep -q "Authority=Developer ID Application" <<<"${info}" || { echo "${item} isn't signed with Developer ID" >&2; exit 1; }
   grep -q "flags=.*runtime" <<<"${info}" || { echo "${item} lacks the hardened runtime" >&2; exit 1; }
   grep -q "Timestamp=" <<<"${info}" || { echo "${item} has no secure timestamp" >&2; exit 1; }
+done
+
+# Xcode adds com.apple.security.get-task-allow (for the debugger) unless told not
+# to, and notarisation rejects any executable that has it.
+for item in "${APP}" "${APP}/Contents/Helpers/airupnp"; do
+  if codesign -d --entitlements - --xml "${item}" 2>/dev/null | grep -q "get-task-allow"; then
+    echo "${item} has the get-task-allow entitlement; notarisation would reject it" >&2
+    exit 1
+  fi
 done
 
 echo "==> Notarising (this can take a few minutes)"

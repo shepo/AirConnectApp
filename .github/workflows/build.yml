@@ -86,6 +86,10 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "$APP"
           codesign -dvv "$HELPER" 2>&1 | tee /dev/stderr | grep -q 'flags=.*runtime'
           codesign -dvv "$APP" 2>&1 | grep -q 'flags=.*runtime'
+          # Notarisation rejects get-task-allow; the Release build must not carry it.
+          if codesign -d --entitlements - --xml "$APP" 2>/dev/null | grep -q get-task-allow; then
+            echo "::error::Release build has the get-task-allow entitlement"; exit 1
+          fi
           test -f "$APP/Contents/Resources/AirConnect/COPYING.txt"
           test -f "$APP/Contents/Resources/AirConnect/LICENSE.txt"
           /usr/libexec/PlistBuddy -c 'Print :LSUIElement' "$APP/Contents/Info.plist" | grep -q true
