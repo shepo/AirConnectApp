@@ -19,7 +19,7 @@ jobs:
     outputs:
       regenerated: ${{ steps.diff.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: brew install xcodegen
       - run: xcodegen generate
       - id: diff
@@ -47,7 +47,7 @@ jobs:
     name: xcodebuild build + test
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: brew install xcodegen
       - name: Generate project
         run: xcodegen generate
